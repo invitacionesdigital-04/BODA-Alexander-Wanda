@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Rafael & Juana · Invitación</title>
+  <meta name="description" content="Invitación a la boda de Rafael y Juana" />
+  <link rel="icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============ PORTADA ============ -->
+  <div id="cover" class="cover">
+    <div class="cover-inner">
+      <div class="corners"></div>
+
+      <p class="cover-welcome">Bienvenidos a la invitación de</p>
+
+      <div class="monogram-wrap">
+        <div class="rule rule-32"></div>
+        <h1 class="monogram monogram-xl">R<span class="amp">&amp;</span>J</h1>
+        <div class="rule rule-32"></div>
+      </div>
+
+      <h2 class="names">Rafael &amp; Juana</h2>
+
+      <svg class="cover-flourish" viewBox="0 0 48 32" fill="currentColor">
+        <path d="M24 8C20 4 14 2 8 4C4 6 2 10 4 14C6 18 12 20 16 18C18 17 19 15 18 13C17 11 14 10 12 12" stroke="currentColor" stroke-width="1" fill="none" />
+        <path d="M24 8C28 4 34 2 40 4C44 6 46 10 44 14C42 18 36 20 32 18C30 17 29 15 30 13C31 11 34 10 36 12" stroke="currentColor" stroke-width="1" fill="none" />
+        <circle cx="24" cy="6" r="2" />
+      </svg>
+
+      <p class="cover-note">La música de fondo es parte de la experiencia</p>
+
+      <div class="cover-buttons">
+        <button class="btn btn-wide" data-enter="music">Ingresar con música</button>
+        <button class="btn btn-wide" data-enter="silent">Ingresar sin música</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ INVITACIÓN ============ -->
+  <audio id="music" src="assets/audio/background-music.mp3" loop preload="auto"></audio>
+
+  <button id="musicToggle" class="music-toggle" aria-label="Activar o silenciar música" hidden>
+    <svg class="icon-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    <svg class="icon-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>
+  </button>
+
+  <main id="invitation" class="invitation" hidden>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-photo">
+        <div class="hero-photo-bg" id="heroBg" style="background-image:url('assets/img/couple-hero.jpg')"></div>
+      </div>
+      <div class="hero-info" data-anim="right">
+        <div class="corners"></div>
+        <div class="center">
+          <p class="hero-date">15.05.2021</p>
+          <h2 class="monogram monogram-lg">R<span class="amp">&amp;</span>J</h2>
+          <p class="names names-hero">Rafael &amp; Juana</p>
+          <svg class="hero-drop" viewBox="0 0 16 24" fill="currentColor">
+            <path d="M8 0C8 0 2 8 2 14C2 18 4.5 22 8 22C11.5 22 14 18 14 14C14 8 8 0 8 0Z" opacity="0.6" />
+          </svg>
+          <p class="hero-quote">Todos somos mortales,<br />hasta el primer beso y la segunda copa de vino</p>
+          <svg class="hero-flourish" viewBox="0 0 64 32" fill="none" stroke="currentColor" stroke-width="1">
+            <path d="M32 16C28 12 22 8 16 10C12 12 10 16 12 20C14 22 18 22 20 20" />
+            <path d="M32 16C36 12 42 8 48 10C52 12 54 16 52 20C50 22 46 22 44 20" />
+            <path d="M28 24Q32 28 36 24" />
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cuenta regresiva -->
+    <section class="section section-countdown" data-section="countdown">
+      <div class="section-divider"></div>
+      <div class="countdown" data-anim="up">
+        <h3 class="countdown-title">Falta</h3>
+        <div class="countdown-units">
+          <div class="unit"><span class="unit-value" id="cd-days">00</span><p class="unit-label">días</p></div>
+          <div class="unit-sep"></div>
+          <div class="unit"><span class="unit-value" id="cd-hours">00</span><p class="unit-label">hs</p></div>
+          <div class="unit-sep"></div>
+          <div class="unit"><span class="unit-value" id="cd-minutes">00</span><p class="unit-label">min</p></div>
+          <div class="unit-sep"></div>
+          <div class="unit"><span class="unit-value" id="cd-seconds">00</span><p class="unit-label">seg</p></div>
+        </div>
+        <svg class="countdown-heart animate-heartbeat" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+      </div>
+      <div class="section-divider"></div>
+    </section>
+
+    <!-- Invitados (solo aparece si el enlace trae ?nombres=...) -->
+    <section class="section section-guests" data-section="guests" hidden>
+      <div class="guests" data-anim="up">
+        <div class="guests-count"><span id="guestsTotal">0</span></div>
+        <h3 class="guests-title">Invitados</h3>
+        <p class="guests-companions" id="guestsCompanions" hidden></p>
+        <div class="guests-list" id="guestsList"></div>
+        <p class="guests-note">Tu presencia es lo más importante. ¡No faltes!</p>
+      </div>
+      <div class="section-divider"></div>
+    </section>
+
+    <!-- Eventos -->
+    <section class="section section-events" data-section="events">
+      <div class="events">
+        <article class="event-card" data-anim="up-30">
+          <div class="frame">
+            <div class="frame-lines" aria-hidden="true">
+              <div class="fl-outer"></div><div class="fl-inner"></div>
+              <i class="dot dot-o tl"></i><i class="dot dot-o tr"></i><i class="dot dot-o bl"></i><i class="dot dot-o br"></i>
+              <i class="dot dot-i tl"></i><i class="dot dot-i tr"></i><i class="dot dot-i bl"></i><i class="dot dot-i br"></i>
+              <div class="fl-h top"></div><div class="fl-h bottom"></div><div class="fl-v left"></div><div class="fl-v right"></div>
+            </div>
+            <div class="frame-content">
+              <div class="event-icon"><img src="assets/icons/anillos.png" alt="Anillos" class="icon-rings animate-gentle-bounce" /></div>
+              <h3 class="event-title">Ceremonia</h3>
+              <div class="event-rule"></div>
+              <h4 class="event-label">Día</h4>
+              <p class="event-text event-text-day">Sábado 15 de Mayo - 17hs</p>
+              <h4 class="event-label">Lugar</h4>
+              <p class="event-text">Parroquia Nuestra Señora de Lujan</p>
+              <a class="btn btn-event" href="https://docs.google.com/forms/d/e/1FAIpQLSfihMMzM0r0wmtJ-7TTirHk179zc3e_VRC--UXJwN-v_59SOw/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">Confirmar asistencia</a>
+              <h4 class="event-label">Dirección</h4>
+              <p class="event-text">Av. Pergamino 203 - Santo Domingo</p>
+              <a class="btn btn-event btn-last" href="https://maps.google.com" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card" data-anim="up-30">
+          <div class="frame">
+            <div class="frame-lines" aria-hidden="true">
+              <div class="fl-outer"></div><div class="fl-inner"></div>
+              <i class="dot dot-o tl"></i><i class="dot dot-o tr"></i><i class="dot dot-o bl"></i><i class="dot dot-o br"></i>
+              <i class="dot dot-i tl"></i><i class="dot dot-i tr"></i><i class="dot dot-i bl"></i><i class="dot dot-i br"></i>
+              <div class="fl-h top"></div><div class="fl-h bottom"></div><div class="fl-v left"></div><div class="fl-v right"></div>
+            </div>
+            <div class="frame-content">
+              <div class="event-icon"><img src="assets/icons/copas.png" alt="Copas de brindis" class="icon-glasses animate-wiggle" /></div>
+              <h3 class="event-title">Recepción</h3>
+              <div class="event-rule"></div>
+              <h4 class="event-label">Día</h4>
+              <p class="event-text event-text-day">Sábado 15 de Mayo - 20hs</p>
+              <h4 class="event-label">Lugar</h4>
+              <p class="event-text">Salon de fiestas Avril</p>
+              <a class="btn btn-event" href="https://docs.google.com/forms/d/e/1FAIpQLSfihMMzM0r0wmtJ-7TTirHk179zc3e_VRC--UXJwN-v_59SOw/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">Confirmar asistencia</a>
+              <h4 class="event-label">Dirección</h4>
+              <p class="event-text">Av. Los Reartes 12 - Santo Domingo</p>
+              <a class="btn btn-event btn-last" href="https://maps.google.com" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Carrusel de fotos -->
+    <section class="section section-carousel" data-section="carousel">
+      <div class="section-divider"></div>
+      <div class="block" data-anim="up">
+        <div class="gold-divider"></div>
+        <h3 class="block-title">Retratos de Nuestro Amor</h3>
+        <p class="block-text block-text-sm">Un minuto, un segundo, un instante que queda en la eternidad</p>
+        <div class="block-icon block-icon-lg">
+          <svg class="icon-camera animate-camera-flash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+        </div>
+
+        <div class="carousel" id="carousel">
+          <div class="carousel-mobile" id="carouselMobile"></div>
+          <div class="carousel-desktop" id="carouselDesktop"></div>
+          <button class="carousel-arrow prev" id="carouselPrev" aria-label="Foto anterior">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button class="carousel-arrow next" id="carouselNext" aria-label="Foto siguiente">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+        <div class="carousel-dots" id="carouselDots"></div>
+      </div>
+      <div class="section-divider"></div>
+    </section>
+
+    <!-- Regalos -->
+    <section class="section section-gifts" data-section="gifts">
+      <div class="section-divider"></div>
+      <div class="block" data-anim="up">
+        <div class="gold-divider"></div>
+        <h3 class="block-title block-title-plain">Regalos</h3>
+        <p class="block-text">Si deseas regalarnos algo más que tu hermosa presencia...</p>
+        <div class="block-icon"><img src="assets/icons/regalo.png" alt="Regalo" class="icon-img animate-gentle-bounce" /></div>
+        <a class="btn btn-lg" href="https://cuentapro11.github.io/dos-botones-regalo/" target="_blank" rel="noopener noreferrer">Ver más</a>
+      </div>
+      <div class="section-divider"></div>
+    </section>
+
+    <!-- Compartir fotos -->
+    <section class="section section-social" data-section="social">
+      <div class="block block-social" data-anim="up">
+        <div class="gold-divider"></div>
+        <h3 class="block-title">Compartimos este día junto a ti</h3>
+        <p class="block-text">Comparte tus fotos y videos de este hermoso día</p>
+        <div class="block-icon"><img src="assets/icons/subir-foto.png" alt="Subir fotos" class="icon-img animate-gentle-bounce" /></div>
+        <div class="hashtag"><span>#rafaelyjuana</span></div>
+        <div><a class="btn btn-lg" href="https://photos.app.goo.gl/oUanUmwPDCBF5yjw7" target="_blank" rel="noopener noreferrer">Sube tu foto</a></div>
+      </div>
+    </section>
+
+    <!-- Pie de página -->
+    <footer class="section section-footer" data-section="footer">
+      <div class="section-divider"></div>
+      <div class="footer">
+        <div class="footer-brand">
+          <div class="rule rule-20"></div>
+          <h4 class="monogram monogram-sm">R<span class="amp">&amp;</span>J</h4>
+          <div class="rule rule-20 rule-after"></div>
+          <p class="names names-footer">Rafael &amp; Juana</p>
+        </div>
+        <nav class="footer-nav">
+          <ul>
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfihMMzM0r0wmtJ-7TTirHk179zc3e_VRC--UXJwN-v_59SOw/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">Confirmar asistencia a ceremonia</a></li>
+            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfihMMzM0r0wmtJ-7TTirHk179zc3e_VRC--UXJwN-v_59SOw/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">Confirmar asistencia a recepción</a></li>
+            <li><a id="songLink" href="#" target="_blank" rel="noopener noreferrer">Sugerir canción</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="section-divider"></div>
+    </footer>
+  </main>
+
+  <!-- Plantilla de esquinas ornamentales (se copia con JS) -->
+  <template id="cornersTpl">
+    <svg class="corner c-tl" viewBox="0 0 64 64" fill="none">
+      <path d="M4 4 L4 24 Q4 4 24 4 L4 4Z" stroke="currentColor" stroke-width="1" fill="none" />
+      <circle cx="8" cy="8" r="3" fill="currentColor" opacity="0.5" />
+      <path d="M12 4 Q8 8 4 12" stroke="currentColor" stroke-width="0.5" fill="none" />
+      <path d="M20 4 Q10 10 4 20" stroke="currentColor" stroke-width="0.5" fill="none" opacity="0.4" />
+    </svg>
+    <svg class="corner c-tr" viewBox="0 0 64 64" fill="none">
+      <path d="M60 4 L60 24 Q60 4 40 4 L60 4Z" stroke="currentColor" stroke-width="1" fill="none" />
+      <circle cx="56" cy="8" r="3" fill="currentColor" opacity="0.5" />
+      <path d="M52 4 Q56 8 60 12" stroke="currentColor" stroke-width="0.5" fill="none" />
+      <path d="M44 4 Q54 10 60 20" stroke="currentColor" stroke-width="0.5" fill="none" opacity="0.4" />
+    </svg>
+    <svg class="corner c-bl" viewBox="0 0 64 64" fill="none">
+      <path d="M4 60 L4 40 Q4 60 24 60 L4 60Z" stroke="currentColor" stroke-width="1" fill="none" />
+      <circle cx="8" cy="56" r="3" fill="currentColor" opacity="0.5" />
+      <path d="M12 60 Q8 56 4 52" stroke="currentColor" stroke-width="0.5" fill="none" />
+    </svg>
+    <svg class="corner c-br" viewBox="0 0 64 64" fill="none">
+      <path d="M60 60 L60 40 Q60 60 40 60 L60 60Z" stroke="currentColor" stroke-width="1" fill="none" />
+      <circle cx="56" cy="56" r="3" fill="currentColor" opacity="0.5" />
+      <path d="M52 60 Q56 56 60 52" stroke="currentColor" stroke-width="0.5" fill="none" />
+    </svg>
+  </template>
+
+  <!-- Plantilla del divisor dorado -->
+  <template id="goldDividerTpl">
+    <div class="gd-line gd-left"></div>
+    <div class="gd-center">
+      <span class="gd-dot gd-dot-lg"></span><span class="gd-dot gd-dot-sm"></span>
+      <svg class="gd-leaf" viewBox="0 0 24 16" fill="currentColor"><path d="M12 2C8 2 4 6 2 8C4 10 8 14 12 14C16 14 20 10 22 8C20 6 16 2 12 2ZM12 4C10 6 8 8 12 12C16 8 14 6 12 4Z" /></svg>
+      <span class="gd-dot gd-dot-sm"></span><span class="gd-dot gd-dot-lg"></span>
+    </div>
+    <div class="gd-line gd-right"></div>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
