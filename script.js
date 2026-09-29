@@ -1,43 +1,49 @@
 /* =========================================================
-   Invitación Rafael & Juana — lógica
+   Invitación Alexander & Wanda — lógica
    ========================================================= */
 (function () {
   "use strict";
 
-  // ---------- Configuración ----------
-  var WEDDING_DATE = new Date("2026-12-31T12:00:00");
-  var PHOTOS = [
-    { src: "assets/img/couple-1.jpg", alt: "Pareja en la ciudad" },
-    { src: "assets/img/couple-2.jpg", alt: "Pareja abrazándose" },
-    { src: "assets/img/couple-3.jpg", alt: "Pareja romántica" },
-    { src: "assets/img/couple-hero.jpg", alt: "Boda" },
-    { src: "assets/img/prueba.jpg", alt: "Prueba" }
-  ];
-  var SONG_MESSAGE = "¡Hola! Me gustaría tener el honor de sugerir una canción para amenizar tan especial celebración:";
+  // ================= CONFIGURACIÓN =================
+  // Fecha de la boda (agrega la hora cuando la tengas, ej: "2026-12-18T17:00:00")
+  var WEDDING_DATE = new Date("2026-12-18T00:00:00");
 
-  // Colores alternados de las secciones
-  var MAIN = "hsl(36 40% 88%)"; // beige claro
+  // Música de fondo:
+  //  - YOUTUBE_ID: el video de YouTube que suena de fondo.
+  //  - MP3: si algún día subes la canción como archivo (ej: "assets/audio/musica.mp3"),
+  //    ponla aquí y se usará en lugar de YouTube (es lo más seguro en iPhone).
+  var MUSIC = {
+    YOUTUBE_ID: "1j67RTRKNe4",
+    MP3: ""
+  };
+
+  // Confirmación de asistencia por WhatsApp
+  var WHATSAPP_NUMBER = "18092647349"; // 809-264-7349
+  // ================================================
+
   var ALT = "hsl(88 13% 40%)";  // verde salvia oscuro
+  var MAIN = "hsl(36 40% 88%)"; // beige claro
 
   var $ = function (sel) { return document.querySelector(sel); };
   var params = new URLSearchParams(window.location.search);
 
   // ---------- Plantillas (esquinas y divisores) ----------
-  var cornersTpl = $("#cornersTpl");
   document.querySelectorAll(".corners").forEach(function (el) {
-    el.appendChild(cornersTpl.content.cloneNode(true));
+    el.appendChild($("#cornersTpl").content.cloneNode(true));
   });
-  var dividerTpl = $("#goldDividerTpl");
   document.querySelectorAll(".gold-divider").forEach(function (el) {
-    el.appendChild(dividerTpl.content.cloneNode(true));
+    el.appendChild($("#goldDividerTpl").content.cloneNode(true));
   });
 
   // ---------- Invitados por enlace (?nombres=Ana,Luis&acompanantes=1) ----------
+  var nombres = [];
   var nombresParam = params.get("nombres");
-  var hasGuests = !!nombresParam;
-  if (hasGuests) {
-    var nombres = nombresParam.split(",").map(function (n) { return n.trim().replace(/\+/g, " "); }).filter(Boolean);
-    var acompanantes = parseInt(params.get("acompanantes") || "0", 10) || 0;
+  if (nombresParam) {
+    nombres = nombresParam.split(",").map(function (n) { return n.trim().replace(/\+/g, " "); }).filter(Boolean);
+  }
+  var acompanantes = parseInt(params.get("acompanantes") || "0", 10) || 0;
+
+  if (nombres.length) {
     $("#guestsTotal").textContent = nombres.length + acompanantes;
     if (acompanantes > 0) {
       var comp = $("#guestsCompanions");
@@ -55,43 +61,127 @@
     $('[data-section="guests"]').hidden = false;
   }
 
-  // ---------- Colores alternados automáticos ----------
-  var order = ["countdown", "guests", "events", "carousel", "gifts", "social", "footer"];
-  var colors = hasGuests
-    ? [ALT, MAIN, ALT, MAIN, ALT, MAIN, ALT]
-    : [ALT, MAIN, MAIN, ALT, MAIN, ALT, MAIN];
-  order.forEach(function (name, i) {
-    var el = document.querySelector('[data-section="' + name + '"]');
-    if (!el) return;
-    el.style.background = colors[i];
-    el.classList.toggle("tone-green", colors[i] === ALT);
+  // ---------- Colores alternados (verde / beige) ----------
+  var visibles = Array.prototype.filter.call(document.querySelectorAll("[data-section]"), function (el) { return !el.hidden; });
+  visibles.forEach(function (el, i) {
+    var color = i % 2 === 0 ? ALT : MAIN;
+    el.style.background = color;
+    el.classList.toggle("tone-green", color === ALT);
   });
 
-  // ---------- Enlace para sugerir canción ----------
-  $("#songLink").href = "https://wa.me/?text=" + encodeURIComponent(SONG_MESSAGE);
+  // ---------- Confirmar asistencia (mensaje formal por WhatsApp) ----------
+  (function () {
+    var quien = nombres.length ? nombres.join(", ") : "__________";
+    if (nombres.length && acompanantes > 0) {
+      quien += " (+" + acompanantes + " acompañante" + (acompanantes > 1 ? "s" : "") + ")";
+    }
+    var mensaje =
+      "Estimados Alexander y Wanda:\n\n" +
+      "Por medio del presente, tengo el honor de confirmar mi asistencia a su boda, " +
+      "a celebrarse el viernes 18 de diciembre de 2026 en L’Monani Restaurant, Higüey.\n\n" +
+      "Invitado(s): " + quien + "\n\n" +
+      "Con cariño y agradecimiento por la invitación.";
+    $("#confirmBtn").href = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(mensaje);
+  })();
 
-  // ---------- Portada y música ----------
-  var cover = $("#cover");
-  var invitation = $("#invitation");
-  var audio = $("#music");
-  var toggle = $("#musicToggle");
+  // =================================================
+  //  MÚSICA
+  //  La música empieza a cargar y sonar en silencio desde que se abre el enlace.
+  //  Al tocar "Ingresar con música" (primera interacción) solo se le quita el
+  //  silencio, así Safari/iPhone la deja sonar sin errores.
+  // =================================================
+  var player = createPlayer();
   var musicOn = false;
+  var toggle = $("#musicToggle");
 
-  function setMusic(on) {
+  function createPlayer() {
+    if (MUSIC.MP3) return mp3Player(MUSIC.MP3);
+    if (MUSIC.YOUTUBE_ID) return youtubePlayer(MUSIC.YOUTUBE_ID);
+    return { play: function () {}, pause: function () {} };
+  }
+
+  // --- Archivo MP3 propio ---
+  function mp3Player(src) {
+    var audio = $("#music");
+    audio.src = src;
+    audio.muted = true;
+    var pre = audio.play(); // arranca en silencio (permitido por los navegadores)
+    if (pre && pre.catch) pre.catch(function () {});
+    return {
+      play: function (fromStart) {
+        if (fromStart) { try { audio.currentTime = 0; } catch (e) {} }
+        audio.muted = false;
+        var p = audio.play();
+        if (p && p.catch) p.catch(function () {});
+      },
+      pause: function () { audio.pause(); }
+    };
+  }
+
+  // --- YouTube (reproductor oculto, solo audio) ---
+  function youtubePlayer(id) {
+    var ready = false;
+    var queue = [];
+    var iframe = document.createElement("iframe");
+    iframe.title = "Música de fondo";
+    iframe.setAttribute("allow", "autoplay; encrypted-media");
+    iframe.setAttribute("playsinline", "");
+    iframe.src = "https://www.youtube.com/embed/" + id +
+      "?enablejsapi=1&autoplay=1&mute=1&loop=1&playlist=" + id +
+      "&controls=0&playsinline=1&rel=0&modestbranding=1&origin=" + encodeURIComponent(location.origin);
+    $("#ytHolder").appendChild(iframe);
+
+    function send(func, args) {
+      if (!iframe.contentWindow) return;
+      iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: func, args: args || [] }), "*");
+    }
+    function cmd(func, args) {
+      if (ready) send(func, args); else queue.push([func, args]);
+    }
+    // Avisar a YouTube que escuchamos sus eventos y detectar cuándo está listo
+    iframe.addEventListener("load", function () {
+      var tries = 0;
+      var hello = setInterval(function () {
+        tries++;
+        if (!iframe.contentWindow || ready || tries > 40) return clearInterval(hello);
+        iframe.contentWindow.postMessage(JSON.stringify({ event: "listening", id: "bg-music" }), "*");
+      }, 250);
+    });
+    window.addEventListener("message", function (e) {
+      if (typeof e.data !== "string" || e.origin.indexOf("youtube") === -1) return;
+      var data; try { data = JSON.parse(e.data); } catch (err) { return; }
+      if (!ready && (data.event === "onReady" || data.event === "initialDelivery" || data.event === "infoDelivery")) {
+        ready = true;
+        queue.forEach(function (q) { send(q[0], q[1]); });
+        queue = [];
+      }
+    });
+    return {
+      play: function (fromStart) {
+        if (fromStart) cmd("seekTo", [0, true]);
+        cmd("unMute");
+        cmd("setVolume", [100]);
+        cmd("playVideo");
+      },
+      pause: function () { cmd("pauseVideo"); }
+    };
+  }
+
+  function setMusic(on, fromStart) {
     musicOn = on;
     toggle.classList.toggle("is-playing", on);
-    if (on) {
-      var p = audio.play();
-      if (p && p.catch) p.catch(function () {});
-    } else {
-      audio.pause();
-    }
+    if (on) player.play(fromStart); else player.pause();
   }
+
+  // ---------- Portada ----------
+  var cover = $("#cover");
+  var invitation = $("#invitation");
 
   document.querySelectorAll("[data-enter]").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      var withMusic = btn.getAttribute("data-enter") === "music";
-      if (withMusic) setMusic(true); // se inicia dentro del clic para que el navegador lo permita
+      // Se ejecuta dentro del mismo toque para que Safari lo permita
+      if (btn.getAttribute("data-enter") === "music") setMusic(true, true);
+      else setMusic(false);
       cover.classList.add("is-exiting");
       setTimeout(function () {
         cover.remove();
@@ -106,23 +196,40 @@
 
   document.addEventListener("visibilitychange", function () {
     if (invitation.hidden) return;
-    if (document.hidden) {
-      audio.pause();
-    } else if (musicOn) {
-      var p = audio.play();
-      if (p && p.catch) p.catch(function () {});
-    }
+    if (document.hidden) player.pause();
+    else if (musicOn) player.play(false);
   });
 
-  // ---------- Todo lo que arranca al entrar ----------
+  // ---------- Ventanas "Ver más" ----------
+  var lastFocus = null;
+  function openModal(id) {
+    var m = document.getElementById(id);
+    if (!m) return;
+    lastFocus = document.activeElement;
+    m.hidden = false;
+    document.body.classList.add("modal-open");
+    var close = m.querySelector(".modal-close");
+    if (close) close.focus();
+  }
+  function closeModals() {
+    document.querySelectorAll(".modal").forEach(function (m) { m.hidden = true; });
+    document.body.classList.remove("modal-open");
+    if (lastFocus) lastFocus.focus();
+  }
+  document.querySelectorAll("[data-modal]").forEach(function (b) {
+    b.addEventListener("click", function () { openModal(b.getAttribute("data-modal")); });
+  });
+  document.querySelectorAll("[data-close]").forEach(function (b) {
+    b.addEventListener("click", closeModals);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModals(); });
+
+  // ---------- Al entrar ----------
   function startInvitation() {
     setupReveal();
-    setupParallax();
     startCountdown();
-    setupCarousel();
   }
 
-  // Aparición suave al hacer scroll
   function setupReveal() {
     var items = document.querySelectorAll("[data-anim]");
     if (!("IntersectionObserver" in window)) {
@@ -140,98 +247,17 @@
     items.forEach(function (el) { io.observe(el); });
   }
 
-  // Efecto parallax de la foto principal
-  function setupParallax() {
-    var hero = $("#hero");
-    var bg = $("#heroBg");
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    var ticking = false;
-    function update() {
-      var rect = hero.getBoundingClientRect();
-      var progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
-      bg.style.transform = "translate3d(0," + (progress * 30) + "%,0)";
-      ticking = false;
-    }
-    window.addEventListener("scroll", function () {
-      if (!ticking) { requestAnimationFrame(update); ticking = true; }
-    }, { passive: true });
-    update();
-  }
-
-  // Cuenta regresiva
   function startCountdown() {
-    var els = {
-      days: $("#cd-days"), hours: $("#cd-hours"),
-      minutes: $("#cd-minutes"), seconds: $("#cd-seconds")
-    };
+    var els = { d: $("#cd-days"), h: $("#cd-hours"), m: $("#cd-minutes"), s: $("#cd-seconds") };
     function pad(n) { return String(n).padStart(2, "0"); }
     function tick() {
-      var diff = WEDDING_DATE.getTime() - Date.now();
-      if (diff < 0) diff = 0;
-      els.days.textContent = pad(Math.floor(diff / 86400000));
-      els.hours.textContent = pad(Math.floor(diff / 3600000) % 24);
-      els.minutes.textContent = pad(Math.floor(diff / 60000) % 60);
-      els.seconds.textContent = pad(Math.floor(diff / 1000) % 60);
+      var diff = Math.max(WEDDING_DATE.getTime() - Date.now(), 0);
+      els.d.textContent = pad(Math.floor(diff / 86400000));
+      els.h.textContent = pad(Math.floor(diff / 3600000) % 24);
+      els.m.textContent = pad(Math.floor(diff / 60000) % 60);
+      els.s.textContent = pad(Math.floor(diff / 1000) % 60);
     }
     tick();
     setInterval(tick, 1000);
-  }
-
-  // Carrusel de fotos
-  function setupCarousel() {
-    var mobile = $("#carouselMobile");
-    var desktop = $("#carouselDesktop");
-    var dots = $("#carouselDots");
-    var total = PHOTOS.length;
-    var current = 0;
-    var timer;
-
-    PHOTOS.forEach(function (_, i) {
-      var b = document.createElement("button");
-      b.setAttribute("aria-label", "Ver foto " + (i + 1));
-      b.addEventListener("click", function () { go(i); });
-      dots.appendChild(b);
-    });
-
-    function photo(img, extraClass) {
-      var div = document.createElement("div");
-      div.className = "photo" + (extraClass ? " " + extraClass : "");
-      var el = document.createElement("img");
-      el.src = img.src;
-      el.alt = img.alt;
-      div.appendChild(el);
-      return div;
-    }
-
-    function render() {
-      mobile.innerHTML = "";
-      mobile.appendChild(photo(PHOTOS[current]));
-
-      desktop.innerHTML = "";
-      desktop.appendChild(photo(PHOTOS[(current - 1 + total) % total]));
-      desktop.appendChild(photo(PHOTOS[current], "is-center"));
-      desktop.appendChild(photo(PHOTOS[(current + 1) % total]));
-
-      Array.prototype.forEach.call(dots.children, function (d, i) {
-        d.classList.toggle("is-active", i === current);
-      });
-    }
-
-    function restart() {
-      clearInterval(timer);
-      timer = setInterval(function () { go(current + 1, true); }, 4000);
-    }
-
-    function go(i, auto) {
-      current = (i + total) % total;
-      render();
-      if (!auto) restart();
-    }
-
-    $("#carouselPrev").addEventListener("click", function () { go(current - 1); });
-    $("#carouselNext").addEventListener("click", function () { go(current + 1); });
-
-    render();
-    restart();
   }
 })();
