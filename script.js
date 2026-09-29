@@ -12,9 +12,11 @@
   //  - YOUTUBE_ID: el video de YouTube que suena de fondo.
   //  - MP3: si algún día subes la canción como archivo (ej: "assets/audio/musica.mp3"),
   //    ponla aquí y se usará en lugar de YouTube (es lo más seguro en iPhone).
+  //  Si existe el archivo MP3 se usa ese (sin anuncios). Si no existe,
+  //  se usa YouTube automáticamente como respaldo.
   var MUSIC = {
-    YOUTUBE_ID: "1j67RTRKNe4",
-    MP3: ""
+    MP3: "assets/audio/musica.mp3",
+    YOUTUBE_ID: "1j67RTRKNe4"
   };
 
   // Confirmación de asistencia por WhatsApp
@@ -95,9 +97,22 @@
   var toggle = $("#musicToggle");
 
   function createPlayer() {
-    if (MUSIC.MP3) return mp3Player(MUSIC.MP3);
-    if (MUSIC.YOUTUBE_ID) return youtubePlayer(MUSIC.YOUTUBE_ID);
-    return { play: function () {}, pause: function () {} };
+    var silent = { play: function () {}, pause: function () {} };
+    if (!MUSIC.MP3) return MUSIC.YOUTUBE_ID ? youtubePlayer(MUSIC.YOUTUBE_ID) : silent;
+
+    // Intenta el MP3; si el archivo no existe, cambia a YouTube sin que se note.
+    var active = mp3Player(MUSIC.MP3);
+    var pending = null;
+    $("#music").addEventListener("error", function () {
+      if (!MUSIC.YOUTUBE_ID || active.isYoutube) return;
+      active = youtubePlayer(MUSIC.YOUTUBE_ID);
+      active.isYoutube = true;
+      if (pending === "play") active.play(true);
+    }, { once: true });
+    return {
+      play: function (fromStart) { pending = "play"; active.play(fromStart); },
+      pause: function () { pending = "pause"; active.pause(); }
+    };
   }
 
   // --- Archivo MP3 propio ---
