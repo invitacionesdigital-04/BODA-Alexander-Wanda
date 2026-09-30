@@ -5,8 +5,8 @@
   "use strict";
 
   // ================= CONFIGURACIÓN =================
-  // Fecha de la boda (agrega la hora cuando la tengas, ej: "2026-12-18T17:00:00")
-  var WEDDING_DATE = new Date("2026-12-18T00:00:00");
+  // Fecha y hora de la boda: viernes 18 de diciembre de 2026, 6:00 p. m.
+  var WEDDING_DATE = new Date("2026-12-18T18:00:00");
 
   // Música de fondo:
   //  - YOUTUBE_ID: el video de YouTube que suena de fondo.
@@ -73,16 +73,15 @@
 
   // ---------- Confirmar asistencia (mensaje formal por WhatsApp) ----------
   (function () {
-    var quien = nombres.length ? nombres.join(", ") : "__________";
+    var quien = nombres.join(", ");
     if (nombres.length && acompanantes > 0) {
       quien += " (+" + acompanantes + " acompañante" + (acompanantes > 1 ? "s" : "") + ")";
     }
     var mensaje =
-      "Estimados Alexander y Wanda:\n\n" +
-      "Por medio del presente, tengo el honor de confirmar mi asistencia a su boda, " +
-      "a celebrarse el viernes 18 de diciembre de 2026 en L’Monani Restaurant, Higüey.\n\n" +
-      "Invitado(s): " + quien + "\n\n" +
-      "Con cariño y agradecimiento por la invitación.";
+      "¡Hola! Confirmo mi asistencia a la boda de Alexander y Wanda " +
+      "el viernes 18 de diciembre a las 6:00 p. m." +
+      (nombres.length ? "\n\nNombre: " + quien : "") +
+      "\n\n¡Gracias por la invitación!";
     $("#confirmBtn").href = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(mensaje);
   })();
 
